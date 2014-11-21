@@ -92,8 +92,12 @@ onDeviceReady: function() {
     //Set file contents
     sendBtn.addEventListener('click', function() {
                              d = document.getElementById('actionButton').innerHTML;
+                             console.log("hahaha"+d);
                              if ( d == 'start'){
-                             var dateStr = new Date().toJSON();
+                             q = document.getElementById ('ikey');
+                             f = document.getElementById ('ipassword');
+                             sq = q.value;
+                             sf = f.value;
                              cordova.exec(
                                           function callback(data) {
                                           console.log('start sending');
@@ -107,9 +111,10 @@ onDeviceReady: function() {
                                           },
                                           'ChipInterface',
                                           'cordovaSendData',
-                                          [ dateStr ]);
+                                          [ sq , sf ]);
                               }else
                               {
+                             console.log("stopp!!");
                                   cordova.exec(
                                                function callback(data) {
                                                console.log('stop sending');
@@ -123,7 +128,7 @@ onDeviceReady: function() {
                                                },
                                                'ChipInterface',
                                                'cordovaStopSedningData',
-                                               [ dateStr ]);
+                                               []);
                               }
                         });
     
@@ -137,7 +142,10 @@ onNetWorkReachAble: function() {
 },
 onDeviceEnterBackground: function() {
     console.log('Did Enter Background');
-    // change the transmit state
+    a = document.getElementById('actionButton');
+    console.log("buuton is" + a);
+    a.value = "start";
+    a.innerHTML = "start";    // change the transmit state
 },
 onDeviceForeground: function() {
     console.log('Did Enter Foreground');

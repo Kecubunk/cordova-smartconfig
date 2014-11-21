@@ -113,7 +113,13 @@
 }
 - (void) cordovaSendData:(CDVInvokedUrlCommand*)command
 {
-    [self startTransmitting:nil key:nil];
+    NSString *arg1 = command.arguments[0];
+    NSString *arg2 = command.arguments[0];
+    if ( [arg1 length] == 0)
+        arg1 = nil;
+    if ( [arg2 length] == 0)
+        arg2 = nil;
+    [self startTransmitting:arg1 key:arg2];
     NSDictionary *jsonObj = [ [NSDictionary alloc]
                              initWithObjectsAndKeys :
                              @"true", @"success",
