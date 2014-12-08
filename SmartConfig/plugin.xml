@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='utf-8'?>
+<plugin id="com.ideacouture.SmartConfig" version="0.0.1" xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
+    <name>SmartConfig</name>
+    <js-module name="SmartConfig" src="www/SmartConfig.js">
+        <clobbers target="cordova.plugins.SmartConfig" />
+    </js-module>
+    <platform name="ios">
+        
+        <js-module src="www/SmartConfig.js" name="SmartConfig">
+            <clobbers target="cordova.plugins.SmartConfig" />
+        </js-module>
+        
+        <config-file target="res/xml/config.xml" parent="widget">
+            <feature name="SmartConfig">
+                <param name="ios-package" value="cordova.plugins.SmartConfig" />
+            </feature>
+        </config-file>
+       
+        <header-file src="src/ios/ChipInterface.h" />
+        <source-file src="src/ios/ChipInterface.m" />
+        <header-file src="src/ios/library/FirstTimeConfig.h" />
+        <header-file src="src/ios/library/FTC-Prefix.pch" />
+        <header-file src="src/ios/library/FTC.plist" />
+        <header-file src="src/ios/library/FtcEncode.h" />
+        <header-file src="src/ios/library/NetworkHelper.h" />
+        <header-file src="src/ios/library/NSData+AESCrypt.h" />
+        <header-file src="src/ios/library/NSString+AESCrypt.h" />
+        <header-file src="src/ios/library/SmartConfigDiscoverMDNS.h" />
+        <source-file src="src/ios/library/SmartConfigDiscoverMDNS.m" />
+        <header-file src="src/ios/library/SmartConfigGlobalConfig.h" />
+        <source-file src="src/ios/library/SmartConfigGlobalConfig.m" />
+        <source-file src="src/ios/library/libFirstTimeConfig.a" framework="true"/>
+        <header-file src="src/ios/Reachability/Reachability.h" compiler-flags="-fno-objc-arc" />
+        <source-file src="src/ios/Reachability/Reachability.m" compiler-flags="-fno-objc-arc" />
+        
+        <framework src="SystemConfiguration.framework" weak="true" />
+    </platform>
+</plugin>
