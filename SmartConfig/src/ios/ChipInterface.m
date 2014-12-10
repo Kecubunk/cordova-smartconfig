@@ -169,11 +169,9 @@ int const MDNSRestartTime = 15;
 }
 -(void)deviceAdded:(id)sender
 {
-    //if(self.discoveryInProgress == YES)
-    //{
     [self stopDiscovery];
-    [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('receivedAckFromDevice');"];
-    //}
+    //[self.commandDelegate evalJs:@"cordova.fireDocumentEvent('receivedAckFromDevice');"];
+    [self.commandDelegate evalJs:@"cordova.SmartConfigPlugin.receivedAckFromDevice();"];
 }
 -(void) stopDiscovery {
     [mdnsTimer invalidate];
@@ -248,7 +246,7 @@ int const MDNSRestartTime = 15;
     }
     @catch (NSException *exception) {
         NSLog(@"%s exception == %@",__FUNCTION__,[exception description]);
-        [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('transmitStopByException');"];
+        [self.commandDelegate evalJs:@"cordova.SmartConfigPlugin.transmitStopByException();"];
         //[self performSelectorOnMainThread:@selector(alertWithMessage:) withObject:[exception description] waitUntilDone:NO];
     }
     
@@ -266,7 +264,7 @@ int const MDNSRestartTime = 15;
         NSLog(@"exception === %@",[exception description]);
         // send exception
         //[self.commandDelegate evalJs:@"cordova.fireDocumentEvent('exceptionWhileTransmit',null, true);"];
-        [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('exceptionWhileTransmit');"];
+        [self.commandDelegate evalJs:@"cordova.SmartConfigPlugin.exceptionWhileTransmit();"];
     }
 
     @finally {

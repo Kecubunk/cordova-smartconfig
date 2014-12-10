@@ -2,17 +2,44 @@ var cordova = require('cordova'),
 	exec = require('cordova/exec');
 
 var SmartConfigPlugin = function() {
-        this.options = {};
+				this.options = {};
 };
 
+// TODO: Rename instances of dateStr to the proper named items.
+
 SmartConfigPlugin.prototype = {
-    init: function() {
+	init: function(success, error) {
 
-		// should handle event bindings from plugin here
+		// General success and error methods.
+		success = success || null;
+		error = error || null;
 
-		console.log('initted');
+		// Handle initial device polling methods.
 
-    },
+		// Get current SSID and store in object.
+		var getSSIDCallback = function(data) {
+
+			console.log('Current SSID: '+data.dateStr);
+			// TODO: Ideally set a internal property on the SmartConfigPlugin instance of something like:
+			// SmartConfigPlugin.currentSSID
+		}
+
+		cordova.exec(getSSIDCallback, error, 'ChipInterface', 'cordovaGetSSID', []);
+
+		// Get current gateway address and store as property.			
+		var getGatewayAddressCallback = function(data) {
+
+			console.log('Current Gateway Address: '+data.dateStr);
+			// TODO: Ideally set a internal property on the SmartConfigPlugin instance of something like:
+			// SmartConfigPlugin.currentGatewayAddress
+		}
+		cordova.exec(getGatewayAddressCallback, error, 'ChipInterface', 'cordovaGetGateWayAddress', []);
+
+		// cordovaGetGateDeviceName method was removed. This seems to just take a static string for use in passing to the cordovaSendData method.
+
+		// cordovaStartToCheckNetworkState method was removed. This seems to detect is wifi is on/connected. Should likely delegate to official cordova methods.
+
+	},
 
 	/**
 	 * Start sending data to the SmartConfig Board.
@@ -68,6 +95,19 @@ SmartConfigPlugin.prototype = {
 
 	},
 
+	// Overload this method with the correct callback.
+	receivedAckFromDevice: function() {
+		console.log('Device Connected');
+	},
+
+	transmitStopByException: function() {
+		console.log('Execution stopped during transmit');
+	},
+
+	exceptionWhileTransmit: function() {
+		console.log('Exception thrown during transmit');
+	}
+
 };
 
 var SmartConfigPlugin = new SmartConfigPlugin();
@@ -77,163 +117,163 @@ module.exports = SmartConfigPlugin;
 /**
 var app = {
 initialize: function() {
-    console.log('returned call back');
-    this.bindEvents();
+		console.log('returned call back');
+		this.bindEvents();
 },
-    // Bind Event Listeners
-    //
-    // Bind any events that are required on startup. Common events are:
-    // 'load', 'deviceready', 'offline', and 'online'.
+		// Bind Event Listeners
+		//
+		// Bind any events that are required on startup. Common events are:
+		// 'load', 'deviceready', 'offline', and 'online'.
 bindEvents: function() {
-    document.addEventListener('deviceready', this.onDeviceReady, false);
-    document.addEventListener('networkunreachable', this.onNetWorkUnreachAble, false);
-    document.addEventListener('networkreachableagain', this.onNetWorkReachAble, false);
-    document.addEventListener('deviceDidEnterBackground', this.onDeviceEnterBackground, false);
-    document.addEventListener('deviceNowForeground', this.onDeviceForeground, false);
-    document.addEventListener('exceptionWhileTransmit', this.onExceptionWhileTransmit, false);
-    document.addEventListener('receivedAckFromDevice', this.onReceivedAckFromDevice, false);
-    document.addEventListener('transmitStopByException', this.onTransmitStopByException, false);
+		document.addEventListener('deviceready', this.onDeviceReady, false);
+		document.addEventListener('networkunreachable', this.onNetWorkUnreachAble, false);
+		document.addEventListener('networkreachableagain', this.onNetWorkReachAble, false);
+		document.addEventListener('deviceDidEnterBackground', this.onDeviceEnterBackground, false);
+		document.addEventListener('deviceNowForeground', this.onDeviceForeground, false);
+		document.addEventListener('exceptionWhileTransmit', this.onExceptionWhileTransmit, false);
+		document.addEventListener('receivedAckFromDevice', this.onReceivedAckFromDevice, false);
+		document.addEventListener('transmitStopByException', this.onTransmitStopByException, false);
 },
-    
+		
 onDeviceReady: function() {
-    var contentsDiv    = document.getElementById('fileContentsDiv'),
-    sendBtn = document.getElementById('actionButton');
-    cordova.exec(
-                 function callback(data) {
-                 inputSSID = document.getElementById ('issid');
-                 inputSSID.value = data.dateStr;
-                 },
-                 function errorHandler(err) {
-                 alert('Error');
-                 },
-                 'ChipInterface',
-                 'cordovaGetSSID',
-                 [ ]
-                 );
-    cordova.exec(
-                 function callback(data) {
-                 a = document.getElementById ('igatewaya');
-                 console.log("returndata" + a);
-                 a.value = data.dateStr;
-                 },
-                 function errorHandler(err) {
-                 alert('Error');
-                 },
-                 'ChipInterface',
-                 'cordovaGetGateWayAddress',
-                 [ ]
-                 );
-    cordova.exec(
-                 function callback(data) {
-                 a = document.getElementById ('idevname');
-                 console.log("returndata" + a);
-                 a.value = data.dateStr;
-                 },
-                 function errorHandler(err) {
-                 alert('Error');
-                 },
-                 'ChipInterface',
-                 'cordovaGetGateDeviceName',
-                 [ ]
-                 );
-    
-    cordova.exec(
-                 function callback(data) {
-                 console.log('add Listner now');
-                 },
-                 function errorHandler(err) {
-                 },
-                 'ChipInterface',
-                 'cordovaStartToCheckNetworkState',
-                 [ ]
-                 );
-    
-    //Set file contents
-    sendBtn.addEventListener('click', function() {
-                             d = document.getElementById('actionButton').innerHTML;
-                             console.log("hahaha"+d);
-                             if ( d == 'start'){
-                             q = document.getElementById ('ikey');
-                             f = document.getElementById ('ipassword');
-                             s = document.getElementById ('issid');
-                             d = document.getElementById ('idevname');
-                             sq = q.value;
-                             sf = f.value;
-                             ss = s.value;
-                             sd = d.value;
-                             cordova.exec(
-                                          function callback(data) {
-                                          console.log('start sending');
-                                          a = document.getElementById('actionButton');
-                                          console.log("buuton is" + a);
-                                          a.value = "stop";
-                                          a.innerHTML = "stop";
-                                          },
-                                          function errorHandler(err) {
-                                          alert('Error');
-                                          },
-                                          'ChipInterface',
-                                          'cordovaSendData',
-                                          [ sq , sf , ss, sd]);
-                              }else
-                              {
-                             console.log("stopp!!");
-                                  cordova.exec(
-                                               function callback(data) {
-                                               console.log('stop sending');
-                                               a = document.getElementById('actionButton');
-                                               console.log("buuton is" + a);
-                                               a.value = "start";
-                                               a.innerHTML = "start";
-                                               },
-                                               function errorHandler(err) {
-                                               alert('Error');
-                                               },
-                                               'ChipInterface',
-                                               'cordovaStopSendingData',
-                                               []);
-                              }
-                        });
-    
+		var contentsDiv    = document.getElementById('fileContentsDiv'),
+		sendBtn = document.getElementById('actionButton');
+		cordova.exec(
+								 function callback(data) {
+								 inputSSID = document.getElementById ('issid');
+								 inputSSID.value = data.dateStr;
+								 },
+								 function errorHandler(err) {
+								 alert('Error');
+								 },
+								 'ChipInterface',
+								 'cordovaGetSSID',
+								 [ ]
+								 );
+		cordova.exec(
+								 function callback(data) {
+								 a = document.getElementById ('igatewaya');
+								 console.log("returndata" + a);
+								 a.value = data.dateStr;
+								 },
+								 function errorHandler(err) {
+								 alert('Error');
+								 },
+								 'ChipInterface',
+								 'cordovaGetGateWayAddress',
+								 [ ]
+								 );
+		cordova.exec(
+								 function callback(data) {
+								 a = document.getElementById ('idevname');
+								 console.log("returndata" + a);
+								 a.value = data.dateStr;
+								 },
+								 function errorHandler(err) {
+								 alert('Error');
+								 },
+								 'ChipInterface',
+								 'cordovaGetGateDeviceName',
+								 [ ]
+								 );
+		
+		cordova.exec(
+								 function callback(data) {
+								 console.log('add Listner now');
+								 },
+								 function errorHandler(err) {
+								 },
+								 'ChipInterface',
+								 'cordovaStartToCheckNetworkState',
+								 [ ]
+								 );
+		
+		//Set file contents
+		sendBtn.addEventListener('click', function() {
+														 d = document.getElementById('actionButton').innerHTML;
+														 console.log("hahaha"+d);
+														 if ( d == 'start'){
+														 q = document.getElementById ('ikey');
+														 f = document.getElementById ('ipassword');
+														 s = document.getElementById ('issid');
+														 d = document.getElementById ('idevname');
+														 sq = q.value;
+														 sf = f.value;
+														 ss = s.value;
+														 sd = d.value;
+														 cordova.exec(
+																					function callback(data) {
+																					console.log('start sending');
+																					a = document.getElementById('actionButton');
+																					console.log("buuton is" + a);
+																					a.value = "stop";
+																					a.innerHTML = "stop";
+																					},
+																					function errorHandler(err) {
+																					alert('Error');
+																					},
+																					'ChipInterface',
+																					'cordovaSendData',
+																					[ sq , sf , ss, sd]);
+															}else
+															{
+														 console.log("stopp!!");
+																	cordova.exec(
+																							 function callback(data) {
+																							 console.log('stop sending');
+																							 a = document.getElementById('actionButton');
+																							 console.log("buuton is" + a);
+																							 a.value = "start";
+																							 a.innerHTML = "start";
+																							 },
+																							 function errorHandler(err) {
+																							 alert('Error');
+																							 },
+																							 'ChipInterface',
+																							 'cordovaStopSendingData',
+																							 []);
+															}
+												});
+		
 },
 
 onNetWorkUnreachAble: function() {
-    console.log('Warning: Network Not Reachable');
+		console.log('Warning: Network Not Reachable');
 },
 onNetWorkReachAble: function() {
-    console.log('Warning: Network Reachable');
+		console.log('Warning: Network Reachable');
 },
 onDeviceEnterBackground: function() {
-    console.log('Did Enter Background');
-    a = document.getElementById('actionButton');
-    console.log("buuton is" + a);
-    a.value = "start";
-    a.innerHTML = "start";    // change the transmit state
+		console.log('Did Enter Background');
+		a = document.getElementById('actionButton');
+		console.log("buuton is" + a);
+		a.value = "start";
+		a.innerHTML = "start";    // change the transmit state
 },
 onDeviceForeground: function() {
-    console.log('Did Enter Foreground');
+		console.log('Did Enter Foreground');
 },
 onExceptionWhileTransmit: function() {
-    a = document.getElementById('actionButton');
-    console.log("buuton is" + a);
-    a.value = "start";
-    a.innerHTML = "start";
+		a = document.getElementById('actionButton');
+		console.log("buuton is" + a);
+		a.value = "start";
+		a.innerHTML = "start";
 
-    // state is start again
+		// state is start again
 },
 onReceivedAckFromDevice: function() {
-    a = document.getElementById('actionButton');
-    console.log("buuton is" + a);
-    a.value = "start";
-    a.innerHTML = "start";
+		a = document.getElementById('actionButton');
+		console.log("buuton is" + a);
+		a.value = "start";
+		a.innerHTML = "start";
  
 },
 onTransmitStopByException: function() {
-    a = document.getElementById('actionButton');
-    console.log("buuton is" + a);
-    a.value = "start";
-    a.innerHTML = "start";
-    //state is start again
+		a = document.getElementById('actionButton');
+		console.log("buuton is" + a);
+		a.value = "start";
+		a.innerHTML = "start";
+		//state is start again
 }
 
 };
